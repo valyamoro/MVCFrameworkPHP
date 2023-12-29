@@ -3,19 +3,20 @@
 namespace app\controllers;
 
 use app\core\Application;
+use app\core\Controller;
 
-class SideController
+class SideController extends Controller
 {
     public static function home()
     {
         $params = [
             'name' => 'kutlumbek',
         ];
-        return Application::$app->router->renderView('home', $params);
+        return self::render('home', $params);
     }
     public static function contact()
     {
-        return Application::$app->router->renderView('contact');
+        return self::render('contact');
     }
     public static function handleContact()
     {

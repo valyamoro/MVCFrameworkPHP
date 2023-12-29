@@ -14,11 +14,12 @@ class Router
         $this->response = $response;
     }
 
-    public function get(string $path, string|callable $callback): void
+    public function get(string $path, $callback): void
     {
         $this->routes['get'][$path] = $callback;
     }
-    public function post(string $path, string|callable $callback): void
+
+    public function post(string $path, $callback): void
     {
         $this->routes['post'][$path] = $callback;
     }
@@ -37,31 +38,33 @@ class Router
         if (\is_string($callback)) {
             return $this->renderView($callback);
         }
+
         return \call_user_func($callback);
     }
 
-    public function renderView($view)
+    public function renderView($view, $params = []): string
     {
         $layoutContent = $this->layoutContent();
-        $viewContent = $this->renderOnlyView($view);
+        $viewContent = $this->renderOnlyView($view, $params);
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
+
     public function renderContent($viewContent)
     {
         $layoutContent = $this->layoutContent();
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
 
-
-    protected function layoutContent(): bool|string
+    protected function layoutContent(): string
     {
         ob_start();
-        include_once Application::$rootDir . "/views/layouts/main.php";
+        include_once Application::$rootDir . '/views/layouts/main.php';
         return ob_get_clean();
     }
 
-    protected function renderOnlyView($view)
+    protected function renderOnlyView($view, $params): string
     {
+        \extract($params);
         ob_start();
         include_once Application::$rootDir . "/views/{$view}.php";
         return ob_get_clean();
